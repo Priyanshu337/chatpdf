@@ -8,9 +8,10 @@ import FileUpload from "@/components/ui/FileUpload";
 
 
 export default async function Home() {
-  const { userId }: { userId: string | null } = auth();
+  const { userId } = await auth();
   const isAuth = !!userId;
   return (
+
     <div className="w-screen min-h-screen bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ">
         <div className="flex flex-col item-center text-center ">

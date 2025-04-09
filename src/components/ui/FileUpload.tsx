@@ -1,4 +1,4 @@
-'use client'
+"use client"
 import { useMutation } from '@tanstack/react-query';
 import { UploadToS3 } from '@/lib/s3'
 import { Inbox, Loader2 } from 'lucide-react'
@@ -17,7 +17,7 @@ type S3UploadResponse = {
     file_name: string;
 };
 
-const FileUpload = (props: Props) => {
+export default function FileUpload(props: Props) {
     const router = useRouter();
     const [upLoading, setUpLoading] = useState(false);
 
@@ -35,12 +35,12 @@ const FileUpload = (props: Props) => {
                 file_key,
                 file_name
             });
-            console.log('This is responose from fileupload stack', response);
 
             const data = response.data;
             return data;
         },
     });
+
 
     // this is to get pdf in input dropzone and then send it to s3 file to upload on bucket.
 
@@ -72,15 +72,19 @@ const FileUpload = (props: Props) => {
 
                 // here we are passing filekey and filename to mutate function 
                 mutate({ file_key: normalizedFileKey, file_name: normalizedFileName }, {
-
-                    onSuccess: ({ chat_id }) => {
-                        console.log(chat_id, "here is the chat id ");
-                        toast.success('chat created');
-                        router.push(`/chat/${chat_id}`);
-
+                    onSuccess: (response) => {
+                        console.log('API Response:', response);
+                        if (response.success && response.chat_id) {
+                            console.log(response.chat_id);
+                            router.push(`/chat/${response.chat_id}`);
+                            toast.success('chat created');
+                        } else {
+                            toast.error('Failed to create chat');
+                        }
                     },
                     onError: (err: any) => {
-                        toast.error('Error creating chat', err);
+                        console.error('Error creating chat:', err);
+                        toast.error('Error creating chat');
                     }
                 })
             } catch (error) {
@@ -116,4 +120,3 @@ const FileUpload = (props: Props) => {
     )
 }
 
-export default FileUpload; 
